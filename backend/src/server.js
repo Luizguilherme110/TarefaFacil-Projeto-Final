@@ -9,6 +9,7 @@ import { iniciarAgendador } from './services/notificacaoService.js';
 import authRoutes from './routes/authRoutes.js';
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import tarefaRoutes from './routes/tarefaRoutes.js';
+import logRoutes from './routes/logRoutes.js';
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -63,6 +64,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/tarefas', tarefaRoutes);
+// Rota para receber logs do frontend (erro runtime)
+app.use('/api/logs', logRoutes);
 
 // ==================== TRATAMENTO DE ERROS ====================
 

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
+import ThemeToggle from './components/ThemeToggle';
 import RotaProtegida from './components/RotaProtegida';
 
 // Páginas Públicas
@@ -13,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 function App() {
   return (
     <AuthProvider>
+      <ThemeToggle />
       <BrowserRouter>
         <Toaster
           position="top-right"

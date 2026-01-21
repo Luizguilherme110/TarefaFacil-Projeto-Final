@@ -76,14 +76,6 @@ const Header = () => {
 
           {/* Usuário e Logout */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Botão Tema */}
-            <button
-              onClick={toggleTema}
-              aria-label="Alternar tema"
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              {temaEscuro ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-gray-600" />}
-            </button>
             <span className="text-sm text-gray-600">
               Olá, <span className="font-medium">{usuario?.nome}</span>
             </span>
