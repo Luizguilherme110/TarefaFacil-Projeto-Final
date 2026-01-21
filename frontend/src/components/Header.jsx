@@ -8,7 +8,9 @@ import {
   User,
   LogOut,
   Menu,
-  X
+  X,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -17,10 +19,35 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
+  const [temaEscuro, setTemaEscuro] = useState(() => {
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved === 'dark';
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  // Aplicar tema na inicialização
+  useState(() => {
+    if (temaEscuro) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  });
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const toggleTema = () => {
+    const novo = !temaEscuro;
+    setTemaEscuro(novo);
+    try {
+      localStorage.setItem('theme', novo ? 'dark' : 'light');
+    } catch (e) {}
+    if (novo) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
   };
 
   const menuItems = [
@@ -74,6 +101,14 @@ const Header = () => {
 
           {/* Usuário e Logout */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Botão Tema */}
+            <button
+              onClick={toggleTema}
+              aria-label="Alternar tema"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              {temaEscuro ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-gray-600" />}
+            </button>
             <span className="text-sm text-gray-600">
               Olá, <span className="font-medium">{usuario?.nome}</span>
             </span>
