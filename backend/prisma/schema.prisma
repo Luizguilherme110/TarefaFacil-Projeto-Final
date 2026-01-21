@@ -6,48 +6,48 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model Usuario {
   id        Int      @id @default(autoincrement())
-  nome      String   @db.VarChar(100)
-  email     String   @unique @db.VarChar(100)
-  senha     String   @db.VarChar(255)
-  resetToken String? @db.VarChar(255)
+  nome      String
+  email     String   @unique
+  senha     String
+  resetToken String?
   resetTokenExpiry DateTime?
-  
+
   notificacoesAtivas Boolean @default(true)
   horarioNotificacao Int     @default(9)
-  
+
   criadoEm       DateTime @default(now())
   atualizadoEm   DateTime @updatedAt
-  
+
   tarefas Tarefa[]
-  
+
   @@map("usuarios")
 }
 
 model Tarefa {
   id          Int      @id @default(autoincrement())
-  titulo      String   @db.VarChar(100)
-  descricao   String?  @db.Text
-  disciplina  String   @db.VarChar(50)
-  prioridade  Prioridade
-  dataEntrega DateTime @db.Date
-  status      Status   @default(PENDENTE)
-  
+  titulo      String
+  descricao   String?
+  disciplina  String
+  prioridade  String
+  dataEntrega DateTime
+  status      String   @default("PENDENTE")
+
   dataConclusao DateTime?
-  
+
   usuarioId Int
   usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  
+
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
-  
+
   notificacoes Notificacao[]
-  
+
   @@index([usuarioId])
   @@index([dataEntrega])
   @@index([status])
@@ -56,32 +56,18 @@ model Tarefa {
 
 model Notificacao {
   id         Int      @id @default(autoincrement())
-  tipo       TipoNotificacao
+  tipo       String
   enviada    Boolean  @default(false)
   dataEnvio  DateTime?
-  
+
   tarefaId   Int
   tarefa     Tarefa   @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
-  
+
   criadoEm   DateTime @default(now())
-  
+
   @@index([tarefaId])
   @@index([enviada])
   @@map("notificacoes")
 }
 
-enum Prioridade {
-  ALTA
-  MEDIA
-  BAIXA
-}
-
-enum Status {
-  PENDENTE
-  CONCLUIDA
-}
-
-enum TipoNotificacao {
-  DIA_ANTES
-  DIA_ENTREGA
-}
+// Enums removed for SQLite compatibility; fields use String temporarily.
