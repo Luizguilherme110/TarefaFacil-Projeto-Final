@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(100)
+  senha     String   @db.VarChar(255)
+  resetToken String? @db.VarChar(255)
+  resetTokenExpiry DateTime?
+  
+  notificacoesAtivas Boolean @default(true)
+  horarioNotificacao Int     @default(9)
+  
+  criadoEm       DateTime @default(now())
+  atualizadoEm   DateTime @updatedAt
+  
+  tarefas Tarefa[]
+  
+  @@map("usuarios")
+}
+
+model Tarefa {
+  id          Int      @id @default(autoincrement())
+  titulo      String   @db.VarChar(100)
+  descricao   String?  @db.Text
+  disciplina  String   @db.VarChar(50)
+  prioridade  Prioridade
+  dataEntrega DateTime @db.Date
+  status      Status   @default(PENDENTE)
+  
+  dataConclusao DateTime?
+  
+  usuarioId Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+  
+  notificacoes Notificacao[]
+  
+  @@index([usuarioId])
+  @@index([dataEntrega])
+  @@index([status])
+  @@map("tarefas")
+}
+
+model Notificacao {
+  id         Int      @id @default(autoincrement())
+  tipo       TipoNotificacao
+  enviada    Boolean  @default(false)
+  dataEnvio  DateTime?
+  
+  tarefaId   Int
+  tarefa     Tarefa   @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
+  
+  criadoEm   DateTime @default(now())
+  
+  @@index([tarefaId])
+  @@index([enviada])
+  @@map("notificacoes")
+}
+
+enum Prioridade {
+  ALTA
+  MEDIA
+  BAIXA
+}
+
+enum Status {
+  PENDENTE
+  CONCLUIDA
+}
+
+enum TipoNotificacao {
+  DIA_ANTES
+  DIA_ENTREGA
+}

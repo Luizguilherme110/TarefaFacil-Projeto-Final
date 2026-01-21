@@ -1,0 +1,150 @@
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import {
+  LayoutDashboard,
+  CheckSquare,
+  Calendar,
+  BarChart3,
+  User,
+  LogOut,
+  Menu,
+  X
+} from 'lucide-react';
+import { useState } from 'react';
+
+const Header = () => {
+  const { usuario, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [menuAberto, setMenuAberto] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const menuItems = [
+    { nome: 'Dashboard', icone: LayoutDashboard, caminho: '/' },
+    { nome: 'Tarefas', icone: CheckSquare, caminho: '/tarefas' },
+    { nome: 'Calendário', icone: Calendar, caminho: '/calendario' },
+    { nome: 'Estatísticas', icone: BarChart3, caminho: '/estatisticas' },
+    { nome: 'Perfil', icone: User, caminho: '/perfil' },
+  ];
+
+  const estaAtivo = (caminho) => {
+    return location.pathname === caminho;
+  };
+
+  return (
+    <header className="bg-white shadow-sm border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="bg-primary-600 text-white p-2 rounded-lg">
+              <CheckSquare className="h-6 w-6" />
+            </div>
+            <span className="text-xl font-bold text-gray-900">
+              Tarefa<span className="text-primary-600">Fácil</span>
+            </span>
+          </Link>
+
+          {/* Menu Desktop */}
+          <nav className="hidden md:flex space-x-1">
+            {menuItems.map((item) => {
+              const Icone = item.icone;
+              const ativo = estaAtivo(item.caminho);
+              
+              return (
+                <Link
+                  key={item.caminho}
+                  to={item.caminho}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                    ativo
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icone className="h-5 w-5" />
+                  <span className="font-medium">{item.nome}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Usuário e Logout */}
+          <div className="hidden md:flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              Olá, <span className="font-medium">{usuario?.nome}</span>
+            </span>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <LogOut className="h-5 w-5" />
+              <span>Sair</span>
+            </button>
+          </div>
+
+          {/* Botão Menu Mobile */}
+          <button
+            onClick={() => setMenuAberto(!menuAberto)}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          >
+            {menuAberto ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+
+        {/* Menu Mobile */}
+        {menuAberto && (
+          <div className="md:hidden py-4 border-t border-gray-200">
+            <nav className="space-y-2">
+              {menuItems.map((item) => {
+                const Icone = item.icone;
+                const ativo = estaAtivo(item.caminho);
+                
+                return (
+                  <Link
+                    key={item.caminho}
+                    to={item.caminho}
+                    onClick={() => setMenuAberto(false)}
+                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg ${
+                      ativo
+                        ? 'bg-primary-50 text-primary-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Icone className="h-5 w-5" />
+                    <span className="font-medium">{item.nome}</span>
+                  </Link>
+                );
+              })}
+              
+              <div className="pt-4 border-t border-gray-200">
+                <div className="px-4 py-2 text-sm text-gray-600">
+                  {usuario?.email}
+                </div>
+                <button
+                  onClick={() => {
+                    setMenuAberto(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg"
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span className="font-medium">Sair</span>
+                </button>
+              </div>
+            </nav>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
+
+export default Header;
