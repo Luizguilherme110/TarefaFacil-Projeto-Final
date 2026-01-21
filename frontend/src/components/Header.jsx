@@ -8,9 +8,7 @@ import {
   User,
   LogOut,
   Menu,
-  X,
-  Sun,
-  Moon
+  X
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -19,36 +17,13 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
-  const [temaEscuro, setTemaEscuro] = useState(() => {
-    try {
-      const saved = localStorage.getItem('theme');
-      if (saved) return saved === 'dark';
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch (e) {
-      return false;
-    }
-  });
-
-  // Aplicar tema na inicialização
-  useState(() => {
-    if (temaEscuro) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-  });
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const toggleTema = () => {
-    const novo = !temaEscuro;
-    setTemaEscuro(novo);
-    try {
-      localStorage.setItem('theme', novo ? 'dark' : 'light');
-    } catch (e) {}
-    if (novo) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-  };
+  
 
   const menuItems = [
     { nome: 'Dashboard', icone: LayoutDashboard, caminho: '/' },
