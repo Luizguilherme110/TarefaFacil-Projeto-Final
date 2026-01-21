@@ -1,3 +1,34 @@
+# TarefaFácil — Projeto Final
+
+TarefaFácil é uma aplicação full‑stack para gerenciamento de tarefas com autenticação de usuários, envio de e‑mails de notificação e painel interativo. Desenvolvida como projeto final, demonstra integrações reais entre frontend (React + Vite + Tailwind) e backend (Node.js + Prisma).
+
+## Principais funcionalidades
+- Cadastro, login e autenticação JWT
+- CRUD de tarefas com categorias/estado
+- Notificações por e‑mail
+- Proteção de rotas e validações no servidor
+
+## Tecnologias
+- Frontend: React, Vite, Tailwind CSS
+- Backend: Node.js, Express, Prisma, Nodemailer
+- Banco: SQLite / Postgres (conforme `prisma/schema.prisma`)
+
+## Como rodar localmente
+
+```powershell
+# Backend
+cd backend
+npm install
+npm run dev
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+```
+
+## Licença
+Recomenda-se usar `MIT` se você permitir uso e modificações. Ajuste conforme necessidades acadêmicas.
 # 📚 TarefaFácil - Sistema de Gerenciamento de Tarefas Escolares
 
 Sistema web intuitivo e responsivo para estudantes do ensino fundamental e médio gerenciarem suas tarefas escolares de forma eficiente.
