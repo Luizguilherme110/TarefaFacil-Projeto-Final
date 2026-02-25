@@ -14,6 +14,7 @@ export const cadastroSchema = z.object({
     .min(8, 'Senha deve ter no mínimo 8 caracteres')
     .regex(/[a-zA-Z]/, 'Senha deve conter pelo menos uma letra')
     .regex(/[0-9]/, 'Senha deve conter pelo menos um número'),
+  role: z.enum(['ALUNO', 'PROFESSOR']).optional(),
 });
 
 /**
@@ -49,6 +50,8 @@ export const tarefaSchema = z.object({
       hoje.setHours(0, 0, 0, 0);
       return dataEntrega >= hoje;
     }, 'Data de entrega não pode ser anterior a hoje'),
+  alunoId: z.number().int().positive().optional().nullable(),
+  valorPontos: z.number().min(0, 'Valor deve ser positivo').max(1000, 'Valor máximo é 1000').optional().nullable(),
 });
 
 /**

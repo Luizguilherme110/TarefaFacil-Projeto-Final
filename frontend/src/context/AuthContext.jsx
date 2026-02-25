@@ -41,9 +41,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const cadastrar = async (nome, email, senha) => {
+  const cadastrar = async (nome, email, senha, role) => {
     try {
-      const response = await api.post('/auth/register', { nome, email, senha });
+      const response = await api.post('/auth/register', { nome, email, senha, role });
       
       const { usuario: usuarioData, token } = response.data.dados;
 

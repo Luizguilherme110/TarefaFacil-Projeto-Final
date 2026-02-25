@@ -2,10 +2,17 @@
   "name": "TarefaFácil",
   "short_name": "TarefaFácil",
   "description": "Gerencie tarefas escolares — professores e alunos.",
+  "lang": "pt-BR",
+  "dir": "ltr",
   "start_url": "/",
+  "scope": "/",
+  "id": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#0ea5a4",
+  "categories": ["education", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192.svg",

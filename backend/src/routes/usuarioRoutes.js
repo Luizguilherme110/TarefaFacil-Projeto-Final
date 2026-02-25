@@ -1,12 +1,13 @@
 import express from 'express';
 import {
+  listarAlunos,
   obterPerfil,
   atualizarPerfil,
   alterarSenha,
   atualizarPreferencias,
   excluirConta
 } from '../controllers/usuarioController.js';
-import { verificarAuth } from '../middlewares/auth.js';
+import { verificarAuth, verificarRole } from '../middlewares/auth.js';
 import {
   validar,
   atualizarPerfilSchema,
@@ -17,6 +18,13 @@ const router = express.Router();
 
 // Todas as rotas de usuário requerem autenticação
 router.use(verificarAuth);
+
+/**
+ * @route   GET /api/usuarios/alunos
+ * @desc    Listar todos os alunos (apenas professor)
+ * @access  Private (PROFESSOR)
+ */
+router.get('/alunos', verificarRole('PROFESSOR'), listarAlunos);
 
 /**
  * @route   GET /api/usuarios/perfil

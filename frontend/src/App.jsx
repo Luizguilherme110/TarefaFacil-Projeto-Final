@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
-import ThemeToggle from './components/ThemeToggle';
 import RotaProtegida from './components/RotaProtegida';
 
 // Páginas Públicas
@@ -10,11 +9,15 @@ import Cadastro from './pages/Cadastro';
 
 // Páginas Protegidas
 import Dashboard from './pages/Dashboard';
+import Tarefas from './pages/Tarefas';
+import NovaTarefa from './pages/NovaTarefa';
+import Calendario from './pages/Calendario';
+import Estatisticas from './pages/Estatisticas';
+import Perfil from './pages/Perfil';
 
 function App() {
   return (
     <AuthProvider>
-      <ThemeToggle />
       <BrowserRouter>
         <Toaster
           position="top-right"
@@ -52,6 +55,46 @@ function App() {
             element={
               <RotaProtegida>
                 <Dashboard />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/tarefas"
+            element={
+              <RotaProtegida>
+                <Tarefas />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/tarefas/nova"
+            element={
+              <RotaProtegida>
+                <NovaTarefa />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/calendario"
+            element={
+              <RotaProtegida>
+                <Calendario />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/estatisticas"
+            element={
+              <RotaProtegida>
+                <Estatisticas />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <RotaProtegida>
+                <Perfil />
               </RotaProtegida>
             }
           />

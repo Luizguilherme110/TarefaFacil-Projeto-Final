@@ -23,6 +23,7 @@ export const verificarAuth = async (req, res, next) => {
     // Adicionar informações do usuário à requisição
     req.usuarioId = decoded.id;
     req.usuarioEmail = decoded.email;
+    req.usuarioRole = decoded.role;
     
     next();
   } catch (error) {
@@ -55,11 +56,28 @@ export const gerarToken = (usuario) => {
     {
       id: usuario.id,
       email: usuario.email,
-      nome: usuario.nome
+      nome: usuario.nome,
+      role: usuario.role || 'ALUNO'
     },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRES_IN || '7d'
     }
   );
+};
+
+/**
+ * Middleware para verificar role/permissões
+ */
+export const verificarRole = (requiredRole) => {
+  return (req, res, next) => {
+    const role = req.usuarioRole;
+    if (!role) {
+      return res.status(403).json({ sucesso: false, mensagem: 'Role não encontrado no token' });
+    }
+    if (role !== requiredRole) {
+      return res.status(403).json({ sucesso: false, mensagem: 'Permissão negada' });
+    }
+    next();
+  };
 };

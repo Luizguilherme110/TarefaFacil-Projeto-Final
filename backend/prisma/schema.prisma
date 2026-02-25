@@ -15,6 +15,7 @@ model Usuario {
   nome      String
   email     String   @unique
   senha     String
+  role      String   @default("ALUNO")
   resetToken String?
   resetTokenExpiry DateTime?
 
@@ -24,7 +25,8 @@ model Usuario {
   criadoEm       DateTime @default(now())
   atualizadoEm   DateTime @updatedAt
 
-  tarefas Tarefa[]
+  tarefasRecebidas Tarefa[] @relation("TarefasRecebidas")
+  tarefasCriadas   Tarefa[] @relation("TarefasCriadas")
 
   @@map("usuarios")
 }
@@ -37,11 +39,17 @@ model Tarefa {
   prioridade  String
   dataEntrega DateTime
   status      String   @default("PENDENTE")
+  valorPontos Float?
 
   dataConclusao DateTime?
+  nota          Float?
+  feedbackProfessor String?
 
   usuarioId Int
-  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuario   Usuario @relation("TarefasRecebidas", fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  criadoPorId Int?
+  criadoPor   Usuario? @relation("TarefasCriadas", fields: [criadoPorId], references: [id], onDelete: SetNull)
 
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
@@ -49,6 +57,7 @@ model Tarefa {
   notificacoes Notificacao[]
 
   @@index([usuarioId])
+  @@index([criadoPorId])
   @@index([dataEntrega])
   @@index([status])
   @@map("tarefas")

@@ -2,6 +2,34 @@ import bcrypt from 'bcrypt';
 import prisma from '../config/database.js';
 
 /**
+ * Listar todos os alunos (para professor designar tarefas)
+ */
+export const listarAlunos = async (req, res) => {
+  try {
+    const alunos = await prisma.usuario.findMany({
+      where: { role: 'ALUNO' },
+      select: {
+        id: true,
+        nome: true,
+        email: true
+      },
+      orderBy: { nome: 'asc' }
+    });
+
+    res.json({
+      sucesso: true,
+      dados: alunos
+    });
+  } catch (error) {
+    console.error('Erro ao listar alunos:', error);
+    res.status(500).json({
+      sucesso: false,
+      mensagem: 'Erro ao listar alunos'
+    });
+  }
+};
+
+/**
  * Obter perfil do usuário logado
  */
 export const obterPerfil = async (req, res) => {

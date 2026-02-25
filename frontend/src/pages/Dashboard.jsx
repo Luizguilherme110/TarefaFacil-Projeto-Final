@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import {
@@ -16,6 +17,7 @@ import { textoDiasRestantes, corPrioridade } from '../utils/helpers';
 const Dashboard = () => {
   const [dados, setDados] = useState(null);
   const [carregando, setCarregando] = useState(true);
+  const { usuario } = useAuth();
 
   useEffect(() => {
     carregarDados();
@@ -56,24 +58,26 @@ const Dashboard = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Título e Botão Nova Tarefa */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600 mt-1">
               Bem-vindo! Aqui está um resumo das suas tarefas
             </p>
           </div>
-          <Link
-            to="/tarefas/nova"
-            className="btn btn-primary flex items-center space-x-2"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Nova Tarefa</span>
-          </Link>
+          {usuario?.role === 'PROFESSOR' && (
+            <Link
+              to="/tarefas/nova"
+              className="btn btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto"
+            >
+              <Plus className="h-5 w-5" />
+              <span>Nova Tarefa</span>
+            </Link>
+          )}
         </div>
 
         {/* Cards de Resumo */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Tarefas Pendentes */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
@@ -179,12 +183,14 @@ const Dashboard = () => {
             <div className="text-center py-12 text-gray-500">
               <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>Nenhuma tarefa cadastrada ainda</p>
-              <Link
-                to="/tarefas/nova"
-                className="text-primary-600 hover:text-primary-700 font-medium mt-2 inline-block"
-              >
-                Criar sua primeira tarefa
-              </Link>
+              {usuario?.role === 'PROFESSOR' && (
+                <Link
+                  to="/tarefas/nova"
+                  className="text-primary-600 hover:text-primary-700 font-medium mt-2 inline-block"
+                >
+                  Criar sua primeira tarefa
+                </Link>
+              )}
             </div>
           )}
         </div>

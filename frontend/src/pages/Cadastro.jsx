@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Lock, CheckSquare } from 'lucide-react';
+import { User, Mail, Lock, CheckSquare, GraduationCap, BookOpen } from 'lucide-react';
 
 const Cadastro = () => {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [role, setRole] = useState('ALUNO');
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
   const { cadastrar } = useAuth();
@@ -30,7 +31,7 @@ const Cadastro = () => {
 
     setCarregando(true);
 
-    const sucesso = await cadastrar(nome, email, senha);
+    const sucesso = await cadastrar(nome, email, senha, role);
 
     if (sucesso) {
       navigate('/');
@@ -44,10 +45,10 @@ const Cadastro = () => {
       <div className="max-w-md w-full">
         {/* Logo e Título */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center bg-primary-600 text-white p-4 rounded-2xl mb-4">
-            <CheckSquare className="h-12 w-12" />
+          <div className="inline-flex items-center justify-center bg-primary-600 text-white p-3 sm:p-4 rounded-2xl mb-4">
+            <CheckSquare className="h-10 w-10 sm:h-12 sm:w-12" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
             Tarefa<span className="text-primary-600">Fácil</span>
           </h1>
           <p className="text-gray-600">
@@ -56,7 +57,7 @@ const Cadastro = () => {
         </div>
 
         {/* Formulário */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Criar nova conta
           </h2>
@@ -68,6 +69,37 @@ const Cadastro = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Tipo de Usuário */}
+            <div>
+              <label className="label">Eu sou</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRole('ALUNO')}
+                  className={`flex flex-col items-center gap-2 p-4 border-2 rounded-xl transition-all ${
+                    role === 'ALUNO'
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                  }`}
+                >
+                  <GraduationCap className="h-6 w-6" />
+                  <span className="font-medium text-sm">Aluno</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('PROFESSOR')}
+                  className={`flex flex-col items-center gap-2 p-4 border-2 rounded-xl transition-all ${
+                    role === 'PROFESSOR'
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                  }`}
+                >
+                  <BookOpen className="h-6 w-6" />
+                  <span className="font-medium text-sm">Professor</span>
+                </button>
+              </div>
+            </div>
+
             {/* Nome */}
             <div>
               <label className="label">Nome completo</label>

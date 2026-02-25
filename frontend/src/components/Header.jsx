@@ -8,15 +8,37 @@ import {
   User,
   LogOut,
   Menu,
-  X
+  X,
+  Sun,
+  Moon
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Header = () => {
   const { usuario, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
+  const [temaEscuro, setTemaEscuro] = useState(() => {
+    try {
+      const saved = localStorage.getItem('theme')
+      if (saved) return saved === 'dark'
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    } catch (e) {
+      return false
+    }
+  })
+
+  useEffect(() => {
+    if (temaEscuro) document.documentElement.classList.add('dark')
+    else document.documentElement.classList.remove('dark')
+  }, [temaEscuro])
+
+  const toggleTema = () => {
+    const novo = !temaEscuro
+    setTemaEscuro(novo)
+    try { localStorage.setItem('theme', novo ? 'dark' : 'light') } catch (e) {}
+  }
 
   const handleLogout = () => {
     logout();
@@ -43,10 +65,10 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="bg-primary-600 text-white p-2 rounded-lg">
-              <CheckSquare className="h-6 w-6" />
+            <div className="bg-primary-600 text-white p-1.5 sm:p-2 rounded-lg">
+              <CheckSquare className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
-            <span className="text-xl font-bold text-gray-900">
+            <span className="text-lg sm:text-xl font-bold text-gray-900">
               Tarefa<span className="text-primary-600">Fácil</span>
             </span>
           </Link>
@@ -74,11 +96,18 @@ const Header = () => {
             })}
           </nav>
 
-          {/* Usuário e Logout */}
+          {/* Usuário e Logout + Tema */}
           <div className="hidden md:flex items-center space-x-4">
             <span className="text-sm text-gray-600">
               Olá, <span className="font-medium">{usuario?.nome}</span>
             </span>
+            <button
+              onClick={toggleTema}
+              aria-label="Alternar tema"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              {temaEscuro ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-gray-600" />}
+            </button>
             <button
               onClick={handleLogout}
               className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -88,22 +117,31 @@ const Header = () => {
             </button>
           </div>
 
-          {/* Botão Menu Mobile */}
-          <button
-            onClick={() => setMenuAberto(!menuAberto)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-          >
-            {menuAberto ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          {/* Botão Tema mobile + Menu Mobile */}
+          <div className="md:hidden flex items-center space-x-2">
+            <button
+              onClick={toggleTema}
+              aria-label="Alternar tema"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              {temaEscuro ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-gray-600" />}
+            </button>
+            <button
+              onClick={() => setMenuAberto(!menuAberto)}
+              className="p-2 rounded-lg hover:bg-gray-100"
+            >
+              {menuAberto ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Menu Mobile */}
         {menuAberto && (
-          <div className="md:hidden py-4 border-t border-gray-200">
+          <div className="md:hidden py-4 border-t border-gray-200 bg-white">
             <nav className="space-y-2">
               {menuItems.map((item) => {
                 const Icone = item.icone;

@@ -28,10 +28,10 @@ const Login = () => {
       <div className="max-w-md w-full">
         {/* Logo e Título */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center bg-primary-600 text-white p-4 rounded-2xl mb-4">
-            <CheckSquare className="h-12 w-12" />
+          <div className="inline-flex items-center justify-center bg-primary-600 text-white p-3 sm:p-4 rounded-2xl mb-4">
+            <CheckSquare className="h-10 w-10 sm:h-12 sm:w-12" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
             Tarefa<span className="text-primary-600">Fácil</span>
           </h1>
           <p className="text-gray-600">
@@ -40,7 +40,7 @@ const Login = () => {
         </div>
 
         {/* Formulário */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Entrar na sua conta
           </h2>

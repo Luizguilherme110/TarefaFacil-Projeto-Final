@@ -9,7 +9,7 @@ import { enviarEmail } from '../services/emailService.js';
  */
 export const cadastrar = async (req, res) => {
   try {
-    const { nome, email, senha } = req.body;
+    const { nome, email, senha, role } = req.body;
 
     // Verificar se email já existe
     const usuarioExistente = await prisma.usuario.findUnique({
@@ -31,12 +31,14 @@ export const cadastrar = async (req, res) => {
       data: {
         nome,
         email,
-        senha: senhaHash
+        senha: senhaHash,
+        role: role === 'PROFESSOR' ? 'PROFESSOR' : 'ALUNO'
       },
       select: {
         id: true,
         nome: true,
         email: true,
+        role: true,
         criadoEm: true
       }
     });
@@ -118,7 +120,8 @@ export const login = async (req, res) => {
         usuario: {
           id: usuario.id,
           nome: usuario.nome,
-          email: usuario.email
+          email: usuario.email,
+          role: usuario.role
         },
         token
       }

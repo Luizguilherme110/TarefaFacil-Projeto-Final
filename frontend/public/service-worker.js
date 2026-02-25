@@ -1,11 +1,12 @@
 const CACHE_NAME = 'tarefafacil-cache-v1';
 const ASSET_URLS = [
+  '/index.html',
   '/icons/icon-192.svg',
   '/icons/icon-512.svg',
   '/manifest.json'
 ];
 
-// Precache only static assets (icons, manifest). Don't precache index.html to avoid serving stale app shell.
+// Precache basic app shell for offline access.
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSET_URLS)));
   self.skipWaiting();
@@ -36,7 +37,8 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          // do not cache the HTML response here; just return it
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', clone));
           return response;
         })
         .catch(() => caches.match('/index.html'))

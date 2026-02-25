@@ -7,11 +7,12 @@ import {
   excluirTarefa,
   concluirTarefa,
   reabrirTarefa,
+  avaliarTarefa,
   obterDashboard,
   obterCalendario,
   obterEstatisticas
 } from '../controllers/tarefaController.js';
-import { verificarAuth } from '../middlewares/auth.js';
+import { verificarAuth, verificarRole } from '../middlewares/auth.js';
 import { validar, tarefaSchema } from '../middlewares/validacao.js';
 
 const router = express.Router();
@@ -59,21 +60,21 @@ router.get('/:id', obterTarefa);
  * @desc    Criar nova tarefa
  * @access  Private
  */
-router.post('/', validar(tarefaSchema), criarTarefa);
+router.post('/', validar(tarefaSchema), verificarRole('PROFESSOR'), criarTarefa);
 
 /**
  * @route   PUT /api/tarefas/:id
  * @desc    Atualizar tarefa
  * @access  Private
  */
-router.put('/:id', validar(tarefaSchema), atualizarTarefa);
+router.put('/:id', validar(tarefaSchema), verificarRole('PROFESSOR'), atualizarTarefa);
 
 /**
  * @route   DELETE /api/tarefas/:id
  * @desc    Excluir tarefa
  * @access  Private
  */
-router.delete('/:id', excluirTarefa);
+router.delete('/:id', verificarRole('PROFESSOR'), excluirTarefa);
 
 /**
  * @route   PATCH /api/tarefas/:id/concluir
@@ -88,5 +89,12 @@ router.patch('/:id/concluir', concluirTarefa);
  * @access  Private
  */
 router.patch('/:id/reabrir', reabrirTarefa);
+
+/**
+ * @route   PATCH /api/tarefas/:id/avaliar
+ * @desc    Avaliar tarefa (professor dá nota)
+ * @access  Private (PROFESSOR)
+ */
+router.patch('/:id/avaliar', verificarRole('PROFESSOR'), avaliarTarefa);
 
 export default router;
