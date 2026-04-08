@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 import { User, Mail, Lock, CheckSquare, GraduationCap, BookOpen } from 'lucide-react';
 
 const Cadastro = () => {
@@ -42,6 +43,7 @@ const Cadastro = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
+      <ThemeToggle />
       <div className="max-w-md w-full">
         {/* Logo e Título */}
         <div className="text-center mb-8">
