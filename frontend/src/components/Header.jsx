@@ -98,9 +98,18 @@ const Header = () => {
 
           {/* Usuário e Logout + Tema */}
           <div className="hidden md:flex items-center space-x-4">
-            <span className="text-sm text-gray-600">
-              Olá, <span className="font-medium">{usuario?.nome}</span>
-            </span>
+            <div className="flex items-center space-x-3 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
+              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex items-center justify-center shrink-0 border border-gray-300 dark:border-gray-600">
+                {usuario?.fotoPerfil ? (
+                  <img src={usuario.fotoPerfil} alt={usuario.nome} className="w-full h-full object-cover" onError={(e) => { e.target.src = '' }} />
+                ) : (
+                  <User size={18} className="text-gray-500 dark:text-gray-400" />
+                )}
+              </div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                {usuario?.nome?.split(' ')[0]}
+              </span>
+            </div>
             <button
               onClick={toggleTema}
               aria-label="Alternar tema"
@@ -164,9 +173,19 @@ const Header = () => {
                 );
               })}
               
-              <div className="pt-4 border-t border-gray-200">
-                <div className="px-4 py-2 text-sm text-gray-600">
-                  {usuario?.email}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="px-4 py-3 flex items-center space-x-3 mb-2">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex items-center justify-center shrink-0">
+                    {usuario?.fotoPerfil ? (
+                      <img src={usuario.fotoPerfil} alt={usuario.nome} className="w-full h-full object-cover" onError={(e) => { e.target.src = '' }} />
+                    ) : (
+                      <User size={20} className="text-gray-500 dark:text-gray-400" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{usuario?.nome}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{usuario?.email}</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => {

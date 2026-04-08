@@ -22,6 +22,11 @@ model Usuario {
   notificacoesAtivas Boolean @default(true)
   horarioNotificacao Int     @default(9)
 
+  fotoPerfil     String?
+  telefone       String?
+  endereco       String?
+  biografia      String?
+
   criadoEm       DateTime @default(now())
   atualizadoEm   DateTime @updatedAt
 

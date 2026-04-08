@@ -125,6 +125,9 @@ cp .env.example .env
 # Rodar migrations do Prisma
 npx prisma migrate dev
 
+# Criar usuários de teste
+npm run seed
+
 # Iniciar servidor backend
 npm run dev
 ```
@@ -145,6 +148,15 @@ npm run dev
 ```
 
 O frontend estará rodando em `http://localhost:5173`
+
+## Usuários de Teste
+
+Após executar `npm run seed` no backend, você pode entrar com:
+
+| Perfil | E-mail | Senha |
+|---|---|---|
+| Aluno | `aluno@test.com` | `Senha123@` |
+| Professor | `professor@test.com` | `Senha123@` |
 
 ## 📋 Funcionalidades Detalhadas
 

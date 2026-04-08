@@ -66,6 +66,10 @@ export const atualizarPerfilSchema = z.object({
     .email('Email inválido')
     .max(100, 'Email deve ter no máximo 100 caracteres')
     .optional(),
+  telefone: z.string().optional().nullable(),
+  endereco: z.string().optional().nullable(),
+  biografia: z.string().optional().nullable(),
+  fotoPerfil: z.string().optional().nullable(),
 });
 
 /**

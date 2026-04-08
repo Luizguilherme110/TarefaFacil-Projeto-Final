@@ -40,6 +40,10 @@ export const obterPerfil = async (req, res) => {
         id: true,
         nome: true,
         email: true,
+        telefone: true,
+        endereco: true,
+        biografia: true,
+        fotoPerfil: true,
         notificacoesAtivas: true,
         horarioNotificacao: true,
         criadoEm: true,
@@ -76,10 +80,14 @@ export const obterPerfil = async (req, res) => {
  */
 export const atualizarPerfil = async (req, res) => {
   try {
-    const { nome, email } = req.body;
+    const { nome, email, telefone, endereco, biografia, fotoPerfil } = req.body;
     const dadosAtualizacao = {};
 
     if (nome) dadosAtualizacao.nome = nome;
+    if (telefone !== undefined) dadosAtualizacao.telefone = telefone;
+    if (endereco !== undefined) dadosAtualizacao.endereco = endereco;
+    if (biografia !== undefined) dadosAtualizacao.biografia = biografia;
+    if (fotoPerfil !== undefined) dadosAtualizacao.fotoPerfil = fotoPerfil;
     
     if (email) {
       // Verificar se o novo email já está em uso por outro usuário
@@ -109,6 +117,10 @@ export const atualizarPerfil = async (req, res) => {
         id: true,
         nome: true,
         email: true,
+        telefone: true,
+        endereco: true,
+        biografia: true,
+        fotoPerfil: true,
         criadoEm: true
       }
     });
