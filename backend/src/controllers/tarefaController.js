@@ -501,10 +501,149 @@ export const avaliarTarefa = async (req, res) => {
 };
 
 /**
+ * Obter notificações do usuário para o sino do sistema
+ */
+export const obterNotificacoes = async (req, res) => {
+  try {
+    const isProfessor = req.usuarioRole === 'PROFESSOR';
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const limiteProximoPrazo = new Date(hoje);
+    limiteProximoPrazo.setDate(limiteProximoPrazo.getDate() + 2);
+
+    const whereBase = isProfessor
+      ? { criadoPorId: req.usuarioId }
+      : { usuarioId: req.usuarioId };
+
+    const tarefas = await prisma.tarefa.findMany({
+      where: {
+        ...whereBase,
+        OR: [
+          { status: 'CONCLUIDA' },
+          { status: 'AVALIADA' },
+          {
+            status: 'PENDENTE',
+            dataEntrega: {
+              lte: limiteProximoPrazo
+            }
+          }
+        ]
+      },
+      include: {
+        usuario: { select: { nome: true } },
+        criadoPor: { select: { nome: true } }
+      },
+      orderBy: [
+        { atualizadoEm: 'desc' },
+        { dataEntrega: 'asc' }
+      ],
+      take: 20
+    });
+
+    const notificacoes = tarefas
+      .flatMap((tarefa) => {
+        const diasRestantes = calcularDiasRestantes(tarefa.dataEntrega);
+        const itens = [];
+
+        if (!isProfessor && tarefa.status === 'AVALIADA') {
+          itens.push({
+            id: `avaliada-${tarefa.id}`,
+            nivel: 'sucesso',
+            titulo: 'Tarefa avaliada',
+            mensagem: `A atividade "${tarefa.titulo}" recebeu ${tarefa.nota ?? '-'} / 10.`,
+            data: tarefa.atualizadoEm,
+            rota: '/tarefas'
+          });
+        }
+
+        if (isProfessor && tarefa.status === 'CONCLUIDA') {
+          itens.push({
+            id: `concluida-${tarefa.id}`,
+            nivel: 'info',
+            titulo: 'Tarefa aguardando avaliação',
+            mensagem: `${tarefa.usuario?.nome || 'Um aluno'} concluiu "${tarefa.titulo}".`,
+            data: tarefa.dataConclusao || tarefa.atualizadoEm,
+            rota: '/tarefas'
+          });
+        }
+
+        if (!isProfessor && tarefa.status === 'PENDENTE') {
+          const criadoEm = new Date(tarefa.criadoEm);
+          criadoEm.setHours(0, 0, 0, 0);
+          const diasDesdeCriacao = Math.floor((hoje.getTime() - criadoEm.getTime()) / (1000 * 60 * 60 * 24));
+
+          if (diasDesdeCriacao <= 2) {
+            itens.push({
+              id: `nova-${tarefa.id}`,
+              nivel: 'info',
+              titulo: 'Nova tarefa disponível',
+              mensagem: `${tarefa.criadoPor?.nome || 'Seu professor'} cadastrou "${tarefa.titulo}" para você.`,
+              data: tarefa.criadoEm,
+              rota: '/tarefas'
+            });
+          }
+        }
+
+        if (tarefa.status === 'PENDENTE') {
+          if (diasRestantes < 0) {
+            itens.push({
+              id: `atrasada-${tarefa.id}`,
+              nivel: 'urgente',
+              titulo: 'Prazo vencido',
+              mensagem: `A tarefa "${tarefa.titulo}" está atrasada.`,
+              data: tarefa.dataEntrega,
+              rota: '/tarefas'
+            });
+          } else if (diasRestantes === 0) {
+            itens.push({
+              id: `hoje-${tarefa.id}`,
+              nivel: 'alerta',
+              titulo: 'Entrega hoje',
+              mensagem: `"${tarefa.titulo}" vence hoje.`,
+              data: tarefa.dataEntrega,
+              rota: '/tarefas'
+            });
+          } else if (diasRestantes <= 2) {
+            itens.push({
+              id: `proxima-${tarefa.id}`,
+              nivel: 'alerta',
+              titulo: 'Prazo próximo',
+              mensagem: `Faltam ${diasRestantes} dia(s) para entregar "${tarefa.titulo}".`,
+              data: tarefa.dataEntrega,
+              rota: '/tarefas'
+            });
+          }
+        }
+
+        return itens;
+      })
+      .sort((a, b) => new Date(b.data) - new Date(a.data))
+      .slice(0, 8);
+
+    res.json({
+      sucesso: true,
+      dados: notificacoes
+    });
+  } catch (error) {
+    console.error('Erro ao obter notificações:', error);
+    res.status(500).json({
+      sucesso: false,
+      mensagem: 'Erro ao obter notificações'
+    });
+  }
+};
+
+/**
  * Obter dados para o dashboard
  */
 export const obterDashboard = async (req, res) => {
   try {
+    const isProfessor = req.usuarioRole === 'PROFESSOR';
+    const whereBase = isProfessor
+      ? { criadoPorId: req.usuarioId }
+      : { usuarioId: req.usuarioId };
+
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
@@ -514,26 +653,25 @@ export const obterDashboard = async (req, res) => {
     const fimDaSemana = new Date(hoje);
     fimDaSemana.setDate(fimDaSemana.getDate() + 7);
 
-    // Total de tarefas pendentes
+    const totalTarefas = await prisma.tarefa.count({ where: whereBase });
+
     const tarefasPendentes = await prisma.tarefa.count({
       where: {
-        usuarioId: req.usuarioId,
+        ...whereBase,
         status: 'PENDENTE'
       }
     });
 
-    // Total de tarefas concluídas
     const tarefasConcluidas = await prisma.tarefa.count({
       where: {
-        usuarioId: req.usuarioId,
-        status: 'CONCLUIDA'
+        ...whereBase,
+        status: { in: ['CONCLUIDA', 'AVALIADA'] }
       }
     });
 
-    // Tarefas atrasadas
     const tarefasAtrasadas = await prisma.tarefa.count({
       where: {
-        usuarioId: req.usuarioId,
+        ...whereBase,
         status: 'PENDENTE',
         dataEntrega: {
           lt: hoje
@@ -541,10 +679,9 @@ export const obterDashboard = async (req, res) => {
       }
     });
 
-    // Tarefas para hoje
     const tarefasHoje = await prisma.tarefa.count({
       where: {
-        usuarioId: req.usuarioId,
+        ...whereBase,
         status: 'PENDENTE',
         dataEntrega: {
           gte: hoje,
@@ -553,10 +690,9 @@ export const obterDashboard = async (req, res) => {
       }
     });
 
-    // Tarefas da semana
     const tarefasSemana = await prisma.tarefa.count({
       where: {
-        usuarioId: req.usuarioId,
+        ...whereBase,
         status: 'PENDENTE',
         dataEntrega: {
           gte: hoje,
@@ -565,11 +701,10 @@ export const obterDashboard = async (req, res) => {
       }
     });
 
-    // Distribuição por disciplina
     const porDisciplina = await prisma.tarefa.groupBy({
       by: ['disciplina'],
       where: {
-        usuarioId: req.usuarioId,
+        ...whereBase,
         status: 'PENDENTE'
       },
       _count: {
@@ -577,11 +712,10 @@ export const obterDashboard = async (req, res) => {
       }
     });
 
-    // Distribuição por prioridade
     const porPrioridade = await prisma.tarefa.groupBy({
       by: ['prioridade'],
       where: {
-        usuarioId: req.usuarioId,
+        ...whereBase,
         status: 'PENDENTE'
       },
       _count: {
@@ -589,13 +723,22 @@ export const obterDashboard = async (req, res) => {
       }
     });
 
-    // Tarefas recentes (últimas 5)
     const tarefasRecentes = await prisma.tarefa.findMany({
-      where: {
-        usuarioId: req.usuarioId
+      where: whereBase,
+      include: {
+        usuario: {
+          select: {
+            nome: true
+          }
+        },
+        criadoPor: {
+          select: {
+            nome: true
+          }
+        }
       },
       orderBy: {
-        criadoEm: 'desc'
+        atualizadoEm: 'desc'
       },
       take: 5
     });
@@ -609,7 +752,7 @@ export const obterDashboard = async (req, res) => {
           tarefasAtrasadas,
           tarefasHoje,
           tarefasSemana,
-          total: tarefasPendentes + tarefasConcluidas
+          total: totalTarefas
         },
         distribuicao: {
           porDisciplina,
@@ -617,8 +760,11 @@ export const obterDashboard = async (req, res) => {
         },
         tarefasRecentes: tarefasRecentes.map(tarefa => ({
           ...tarefa,
+          nomeAluno: tarefa.usuario?.nome,
+          nomeProfessor: tarefa.criadoPor?.nome,
           diasRestantes: calcularDiasRestantes(tarefa.dataEntrega),
-          atrasada: tarefa.status === 'PENDENTE' && new Date(tarefa.dataEntrega) < hoje
+          atrasada: tarefa.status === 'PENDENTE' && new Date(tarefa.dataEntrega) < hoje,
+          venceHoje: formatarData(tarefa.dataEntrega) === formatarData(hoje)
         }))
       }
     });

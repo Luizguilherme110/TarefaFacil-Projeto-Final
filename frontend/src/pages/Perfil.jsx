@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Header from '../components/Header'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
 import toast from 'react-hot-toast'
-import { User, Mail, Phone, MapPin, AlignLeft, Camera, Save } from 'lucide-react'
+import { User, MapPin, AlignLeft, Camera, Save } from 'lucide-react'
 
 export default function Perfil() {
   const { usuario, atualizarUsuario } = useAuth()
+  const carregamentoIniciado = useRef(false)
   
   // Controle de loading
   const [carregandoPerfil, setCarregandoPerfil] = useState(true)
@@ -14,8 +15,6 @@ export default function Perfil() {
   
   const [formData, setFormData] = useState({
     nome: '',
-    email: '',
-    telefone: '',
     endereco: '',
     biografia: '',
     fotoPerfil: '',
@@ -23,6 +22,9 @@ export default function Perfil() {
 
   // Buscar dados completos do perfil na API
   useEffect(() => {
+    if (!usuario || carregamentoIniciado.current) return
+    carregamentoIniciado.current = true
+
     const buscarPerfil = async () => {
       try {
         const response = await api.get('/usuarios/perfil')
@@ -30,8 +32,6 @@ export default function Perfil() {
           const dados = response.data.dados
           setFormData({
             nome: dados.nome || '',
-            email: dados.email || '',
-            telefone: dados.telefone || '',
             endereco: dados.endereco || '',
             biografia: dados.biografia || '',
             fotoPerfil: dados.fotoPerfil || '',
@@ -45,15 +45,15 @@ export default function Perfil() {
           });
         }
       } catch (error) {
-        toast.error('Não foi possível carregar os dados do perfil.')
+        toast.error('Não foi possível carregar os dados do perfil.', {
+          id: 'perfil-carregar-erro',
+        })
       } finally {
         setCarregandoPerfil(false)
       }
     }
 
-    if (usuario) {
-      buscarPerfil()
-    }
+    buscarPerfil()
   }, []) // executa uma vez ao montar o componente
 
   const handleChange = (e) => {
@@ -169,43 +169,6 @@ export default function Perfil() {
                 />
               </div>
 
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Mail size={16} className="text-gray-400" />
-                    <span>E-mail</span>
-                  </div>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white opacity-75 cursor-not-allowed"
-                  disabled // Opcional: Para não deixar editar o e-mail no perfil ou requerer confirmação separada
-                  title="O endereço de e-mail não pode ser alterado por aqui"
-                />
-              </div>
-
-              {/* Telefone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Phone size={16} className="text-gray-400" />
-                    <span>Telefone</span>
-                  </div>
-                </label>
-                <input
-                  type="tel"
-                  name="telefone"
-                  placeholder="(00) 00000-0000"
-                  value={formData.telefone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-900 dark:border-gray-600 dark:text-white transition-colors"
-                />
-              </div>
 
               {/* Endereço */}
               <div>

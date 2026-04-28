@@ -10,6 +10,7 @@ import authRoutes from './routes/authRoutes.js';
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import tarefaRoutes from './routes/tarefaRoutes.js';
 import logRoutes from './routes/logRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -78,6 +79,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/tarefas', tarefaRoutes);
+app.use('/api/chat', chatRoutes);
 // Rota para receber logs do frontend (erro runtime)
 app.use('/api/logs', logRoutes);
 

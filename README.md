@@ -1,277 +1,244 @@
-# TarefaFácil — Projeto Final
+# TarefaFácil
 
-TarefaFácil é uma aplicação full‑stack para gerenciamento de tarefas com autenticação de usuários, envio de e‑mails de notificação e painel interativo. Desenvolvida como projeto final, demonstra integrações reais entre frontend (React + Vite + Tailwind) e backend (Node.js + Prisma).
+Sistema web full-stack para gerenciamento de tarefas escolares, com autenticação, dashboard, calendário, estatísticas e notificações para alunos e professores.
 
-## Principais funcionalidades
-- Cadastro, login e autenticação JWT
-- CRUD de tarefas com categorias/estado
-- Notificações por e‑mail
-- Proteção de rotas e validações no servidor
+## Objetivo
 
-## Tecnologias
-- Frontend: React, Vite, Tailwind CSS
-- Backend: Node.js, Express, Prisma, Nodemailer
-- Banco: SQLite / Postgres (conforme `prisma/schema.prisma`)
+O projeto foi desenvolvido como TCC para apoiar a organização de atividades escolares, permitindo que alunos acompanhem prazos e que professores distribuam e avaliem tarefas em um fluxo simples.
 
-## Como rodar localmente
+## Funcionalidades
 
-```powershell
-# Backend
-cd backend
-npm install
-npm run dev
+- Cadastro e login com autenticação JWT
+- Perfis de aluno e professor
+- Criação, listagem, edição e exclusão de tarefas
+- Marcação de tarefa como concluída pelo aluno
+- Avaliação de tarefas pelo professor com nota e feedback
+- Dashboard com resumo de pendentes, concluídas e atrasadas
+- Calendário visual com tarefas por data
+- Estatísticas de desempenho e conclusão
+- Notificações automáticas por e-mail
+- Central de notificações com ícone de sino no sistema
+- Chat interno entre aluno e professor
 
-# Frontend
-cd frontend
-npm install
-npm run dev
-```
-
-## Licença
-Recomenda-se usar `MIT` se você permitir uso e modificações. Ajuste conforme necessidades acadêmicas.
-# 📚 TarefaFácil - Sistema de Gerenciamento de Tarefas Escolares
-
-Sistema web intuitivo e responsivo para estudantes do ensino fundamental e médio gerenciarem suas tarefas escolares de forma eficiente.
-
-## 🎯 Objetivo
-
-Desenvolver um sistema que permita aos estudantes melhorar significativamente a organização, o acompanhamento e a gestão de suas tarefas escolares, promovendo o desenvolvimento de hábitos organizacionais eficientes e o cumprimento pontual de compromissos acadêmicos.
-
-## ✨ Principais Funcionalidades
-
-- ✅ **Gestão de Tarefas**: Criar, editar, visualizar e excluir tarefas escolares
-- 📊 **Dashboard Intuitivo**: Visualização centralizada de todas as atividades
-- 🔔 **Notificações Automáticas**: Lembretes de prazos (24h antes e no dia)
-- 🏷️ **Categorização**: Organização por disciplina e nível de prioridade
-- 📅 **Calendário Visual**: Vista mensal com tarefas destacadas
-- 📈 **Estatísticas**: Métricas de progresso e produtividade
-- 🔐 **Autenticação Segura**: Sistema de login e gerenciamento individualizado
-
-## 🛠️ Stack Tecnológica
+## Stack Tecnológica
 
 ### Frontend
-- **React 18** com Vite
-- **Tailwind CSS** para estilização
-- **React Router DOM** para navegação
-- **Axios** para requisições HTTP
-- **Lucide React** para ícones
-- **React Hot Toast** para notificações
-- **React Hook Form** para formulários
-- **React Datepicker** para seleção de datas
+
+- React 18
+- Vite
+- Tailwind CSS
+- React Router DOM
+- Axios
+- Lucide React
+- React Hot Toast
+- React Hook Form
+- React Datepicker
 
 ### Backend
-- **Node.js** v20+
-- **Express.js** framework web
-- **PostgreSQL** banco de dados relacional
-- **Prisma ORM** para modelagem de dados
-- **JWT** para autenticação
-- **Bcrypt** para hash de senhas
-- **Nodemailer** para envio de emails
-- **Node-cron** para agendamento de tarefas
-- **Zod** para validação de dados
 
-## 📁 Estrutura do Projeto
+- Node.js
+- Express
+- Prisma ORM
+- JWT
+- Bcrypt
+- Nodemailer
+- Node-cron
+- Zod
 
-```
-tarefafacil/
-├── frontend/          # Aplicação React
+### Banco de dados
+
+- SQLite
+
+Observação: o schema atual do Prisma em [backend/prisma/schema.prisma](c:/Users/Usuario/Desktop/tcc%20final/backend/prisma/schema.prisma) está configurado com `provider = "sqlite"`.
+
+## Estrutura do Projeto
+
+```text
+tcc final/
+├── backend/
+│   ├── prisma/
 │   ├── src/
-│   │   ├── components/   # Componentes reutilizáveis
-│   │   ├── pages/        # Páginas da aplicação
-│   │   ├── services/     # Serviços de API
-│   │   ├── context/      # Context API
-│   │   └── utils/        # Funções auxiliares
 │   └── package.json
-│
-├── backend/           # API REST Node.js
+├── docs/
+│   └── screenshots/
+├── frontend/
+│   ├── public/
 │   ├── src/
-│   │   ├── controllers/  # Controladores
-│   │   ├── routes/       # Rotas da API
-│   │   ├── middlewares/  # Middlewares
-│   │   ├── services/     # Serviços
-│   │   ├── config/       # Configurações
-│   │   └── utils/        # Utilidades
-│   ├── prisma/           # Schema e migrations
 │   └── package.json
-│
+├── start.py
 └── README.md
 ```
 
-## 🚀 Como Executar
+## Como Executar
 
 ### Pré-requisitos
-- Node.js v20 ou superior
-- PostgreSQL instalado e rodando
+
+- Node.js 20 ou superior
+- Python 3.11+ para usar o inicializador [start.py](c:/Users/Usuario/Desktop/tcc%20final/start.py)
 - Git
 
-### 1. Clone o repositório
+### 1. Clonar o projeto
+
 ```bash
 git clone <url-do-repositorio>
 cd "tcc final"
 ```
 
-### 2. Configurar Backend
+### 2. Configurar o backend
 
 ```bash
 cd backend
 npm install
-
-# Criar arquivo .env com as variáveis de ambiente
-cp .env.example .env
-
-# Configurar DATABASE_URL no .env
-# Exemplo: DATABASE_URL="postgresql://usuario:senha@localhost:5432/tarefafacil"
-
-# Rodar migrations do Prisma
+copy .env.example .env
 npx prisma migrate dev
-
-# Criar usuários de teste
 npm run seed
-
-# Iniciar servidor backend
-npm run dev
 ```
 
-O backend estará rodando em `http://localhost:3000`
+Por padrão, o banco local fica em `backend/prisma/dev.db`.
 
-### 3. Configurar Frontend
+### 3. Configurar o frontend
 
 ```bash
 cd frontend
 npm install
+copy .env.example .env
+```
 
-# Criar arquivo .env
-# VITE_API_URL=http://localhost:3000/api
+### 4. Iniciar a aplicação
 
-# Iniciar aplicação React
+#### Opção recomendada
+
+Na raiz do projeto:
+
+```bash
+python start.py
+```
+
+O script inicia backend e frontend juntos e encerra ambos com `Ctrl+C`.
+
+#### Opção manual
+
+```bash
+# Terminal 1
+cd backend
+npm run dev
+
+# Terminal 2
+cd frontend
 npm run dev
 ```
 
-O frontend estará rodando em `http://localhost:5173`
+### URLs padrão
+
+- Backend: `http://localhost:3000`
+- Frontend: `http://localhost:5173`
+
+Observação: se a porta `5173` estiver ocupada, o Vite pode subir em outra porta, como `5174`.
 
 ## Usuários de Teste
 
-Após executar `npm run seed` no backend, você pode entrar com:
+Após executar `npm run seed` no backend:
 
 | Perfil | E-mail | Senha |
 |---|---|---|
 | Aluno | `aluno@test.com` | `Senha123@` |
 | Professor | `professor@test.com` | `Senha123@` |
 
-## 📋 Funcionalidades Detalhadas
+## Fluxo Principal
 
-### Gestão de Usuários
-- Cadastro com validação de email único
-- Login com autenticação JWT
-- Recuperação de senha via email
-- Edição de perfil
-- Logout seguro
+### Aluno
 
-### Gestão de Tarefas
-- Criar tarefas com título, descrição, disciplina, prioridade e data de entrega
-- Listar todas as tarefas com filtros
-- Editar informações das tarefas
-- Excluir tarefas com confirmação
-- Marcar como concluída
-- Categorizar por disciplina (Matemática, Português, História, etc.)
-- Definir prioridade (Alta, Média, Baixa)
+- Visualiza tarefas recebidas
+- Marca tarefas como concluídas
+- Acompanha feedback e nota do professor
+- Recebe lembretes e notificações no sistema
+
+### Professor
+
+- Cria tarefas para os alunos
+- Acompanha entregas no dashboard
+- Avalia tarefas concluídas com nota e feedback
+- Recebe notificações quando uma tarefa é concluída
+
+## Funcionalidades Detalhadas
 
 ### Dashboard
+
 - Resumo de tarefas pendentes, concluídas e atrasadas
-- Tarefas do dia e da semana
-- Gráficos de distribuição
-- Filtros avançados (status, disciplina, prioridade)
-- Ordenação personalizada
+- Contagem correta de tarefas concluídas e avaliadas
+- Lista de tarefas recentes
+
+### Tarefas
+
+- Filtros por status, prioridade e disciplina
+- Controle de conclusão e reabertura
+- Avaliação com nota e comentário
+- Valor de pontos por tarefa
 
 ### Notificações
-- Lembrete automático 24h antes do prazo
-- Notificação no dia da entrega
-- Destaque visual de tarefas atrasadas
-- Contador de dias restantes
 
-### Calendário
-- Vista mensal com tarefas
-- Cores por prioridade
-- Navegação entre meses
-- Detalhes ao clicar no dia
+- Lembrete por e-mail antes do prazo e no dia da entrega
+- Avisos de tarefa concluída e tarefa avaliada
+- Central de notificações com sino no cabeçalho
 
-### Estatísticas
-- Total de tarefas criadas
-- Taxa de conclusão no prazo
-- Distribuição por disciplina
-- Evolução mensal
-- Métricas de produtividade
+### Perfil
 
-## 🔒 Segurança
+- Atualização de nome, endereço, biografia e foto de perfil
+- Preferências de notificações no backend
 
-- Senhas com hash bcrypt
-- Autenticação JWT com tokens seguros
-- Validação de entrada contra SQL Injection e XSS
-- Rotas protegidas no backend
-- HTTPS obrigatório em produção
-- Conformidade com LGPD
+### Chat
 
-## 📱 Responsividade
+- Conversas entre aluno e professor dentro da plataforma
+- Lista de conversas com última mensagem e contador de não lidas
+- Envio e leitura de mensagens em tempo real por polling
 
-- Design mobile-first
-- Compatível com dispositivos de 320px a 1920px
-- Testado em Android e iOS
-- Navegadores suportados: Chrome, Firefox, Safari, Edge
+## Prints das Telas
 
-## 🧪 Testes
+As capturas usadas na documentação ficam em [docs/screenshots](c:/Users/Usuario/Desktop/tcc%20final/docs/screenshots) (15 arquivos: login, cadastro, telas do professor, telas do aluno).
 
-- Testes unitários de funções críticas
-- Testes de integração de API
-- Testes de usabilidade
-- Validação de segurança
+**Como regenerar (com backend e frontend rodando em `http://localhost:3000` e `http://localhost:5173`):**
 
-## 🌐 Deploy
-
-### Frontend (Vercel)
 ```bash
 cd frontend
-vercel --prod
+npx playwright install chromium
+npm run capturar-telas
 ```
 
-### Backend (Railway/Render)
+As imagens são salvas em `docs/screenshots/`. Na primeira execução, o Playwright baixa o Chromium automaticamente.
+
+## Segurança
+
+- Senhas com hash bcrypt
+- Autenticação JWT
+- Rotas protegidas por perfil
+- Validação de entrada no backend
+
+## Scripts Úteis
+
+### Backend
+
 ```bash
-cd backend
-# Configurar variáveis de ambiente no painel
-# Deploy automático via Git
+npm run dev
+npm run seed
+npm run prisma:migrate
+npm run prisma:generate
+npm run prisma:studio
 ```
 
-## 👥 Personas
+### Frontend
 
-**João Pedro (Estudante - Persona Principal)**
-- 15 anos, 9º ano do ensino fundamental
-- Dificuldades de organização
-- Precisa de interface simples e lembretes automáticos
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run capturar-telas
+```
 
-**Professora Ana (Persona Secundária)**
-- Educadora que incentiva organização
-- Interesse no desempenho dos alunos
+## Observações
 
-## 📊 Critérios de Sucesso
+- O README anterior tinha seções duplicadas e referências conflitantes a PostgreSQL; isso foi consolidado para refletir o estado atual do projeto.
+- Se for necessário migrar o banco para PostgreSQL no futuro, será preciso ajustar [backend/prisma/schema.prisma](c:/Users/Usuario/Desktop/tcc%20final/backend/prisma/schema.prisma) e a documentação correspondente.
 
-- ✅ Sistema funcionando sem erros críticos
-- ✅ Performance < 2s no carregamento
-- ✅ Responsividade total
-- ✅ Interface intuitiva
-- ✅ Notificações funcionando
-- ✅ Satisfação do usuário > 4/5
+## Licença
 
-## 📄 Licença
-
-Este projeto é um TCC (Trabalho de Conclusão de Curso) de Análise e Desenvolvimento de Sistemas.
-
-## 👨‍💻 Desenvolvedor
-
-Desenvolvido como projeto acadêmico para demonstrar conhecimentos em desenvolvimento full-stack web.
-
-## 📞 Suporte
-
-Para dúvidas ou problemas, consulte a documentação ou entre em contato.
-
----
-
-**TarefaFácil** - Organize suas tarefas, alcance seus objetivos! 🎓✨
+Projeto acadêmico desenvolvido para Trabalho de Conclusão de Curso em Análise e Desenvolvimento de Sistemas.

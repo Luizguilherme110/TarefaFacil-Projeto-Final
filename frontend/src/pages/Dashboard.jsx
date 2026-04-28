@@ -10,7 +10,8 @@ import {
   AlertCircle,
   Calendar,
   Plus,
-  TrendingUp
+  TrendingUp,
+  Award
 } from 'lucide-react';
 import { textoDiasRestantes, corPrioridade } from '../utils/helpers';
 
@@ -62,7 +63,9 @@ const Dashboard = () => {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600 mt-1">
-              Bem-vindo! Aqui está um resumo das suas tarefas
+              {usuario?.role === 'PROFESSOR'
+                ? 'Acompanhe as tarefas criadas para a turma e as entregas dos alunos'
+                : 'Bem-vindo! Aqui está um resumo das suas tarefas'}
             </p>
           </div>
           {usuario?.role === 'PROFESSOR' && (
@@ -167,14 +170,27 @@ const Dashboard = () => {
                         {tarefa.disciplina}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 flex-wrap justify-end">
                       <span className={`badge ${corPrioridade(tarefa.prioridade)}`}>
                         {tarefa.prioridade}
                       </span>
+                      {tarefa.status === 'AVALIADA' ? (
+                        <span className="badge bg-purple-100 text-purple-700 flex items-center gap-1">
+                          <Award className="h-3 w-3" /> Avaliada
+                        </span>
+                      ) : tarefa.status === 'CONCLUIDA' ? (
+                        <span className="badge bg-green-100 text-green-700">Concluída</span>
+                      ) : (
+                        <span className="badge bg-blue-100 text-blue-700">Pendente</span>
+                      )}
                     </div>
                   </div>
                   <div className="mt-2 text-sm text-gray-600">
-                    {textoDiasRestantes(tarefa.diasRestantes)}
+                    {tarefa.status === 'AVALIADA'
+                      ? `Nota recebida: ${tarefa.nota ?? '-'} / 10`
+                      : tarefa.status === 'CONCLUIDA'
+                      ? 'Você já concluiu esta tarefa.'
+                      : textoDiasRestantes(tarefa.diasRestantes)}
                   </div>
                 </div>
               ))}

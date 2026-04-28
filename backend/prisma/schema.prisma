@@ -32,8 +32,30 @@ model Usuario {
 
   tarefasRecebidas Tarefa[] @relation("TarefasRecebidas")
   tarefasCriadas   Tarefa[] @relation("TarefasCriadas")
+  mensagensEnviadas Mensagem[] @relation("MensagemRemetente")
+  mensagensRecebidas Mensagem[] @relation("MensagemDestinatario")
 
   @@map("usuarios")
+}
+
+model Mensagem {
+  id             Int      @id @default(autoincrement())
+  conteudo       String
+  lida           Boolean  @default(false)
+
+  remetenteId    Int
+  remetente      Usuario  @relation("MensagemRemetente", fields: [remetenteId], references: [id], onDelete: Cascade)
+
+  destinatarioId Int
+  destinatario   Usuario  @relation("MensagemDestinatario", fields: [destinatarioId], references: [id], onDelete: Cascade)
+
+  criadoEm       DateTime @default(now())
+  atualizadoEm   DateTime @updatedAt
+
+  @@index([remetenteId])
+  @@index([destinatarioId])
+  @@index([criadoEm])
+  @@map("mensagens")
 }
 
 model Tarefa {

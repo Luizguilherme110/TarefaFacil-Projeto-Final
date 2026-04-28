@@ -8,6 +8,7 @@ import {
   concluirTarefa,
   reabrirTarefa,
   avaliarTarefa,
+  obterNotificacoes,
   obterDashboard,
   obterCalendario,
   obterEstatisticas
@@ -33,6 +34,13 @@ router.get('/', listarTarefas);
  * @access  Private
  */
 router.get('/dashboard', obterDashboard);
+
+/**
+ * @route   GET /api/tarefas/notificacoes
+ * @desc    Obter notificações para o sino do sistema
+ * @access  Private
+ */
+router.get('/notificacoes', obterNotificacoes);
 
 /**
  * @route   GET /api/tarefas/calendario

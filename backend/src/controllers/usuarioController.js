@@ -46,12 +46,7 @@ export const obterPerfil = async (req, res) => {
         fotoPerfil: true,
         notificacoesAtivas: true,
         horarioNotificacao: true,
-        criadoEm: true,
-        _count: {
-          select: {
-            tarefas: true
-          }
-        }
+        criadoEm: true
       }
     });
 

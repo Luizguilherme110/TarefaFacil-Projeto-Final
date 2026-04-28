@@ -14,6 +14,7 @@ import NovaTarefa from './pages/NovaTarefa';
 import Calendario from './pages/Calendario';
 import Estatisticas from './pages/Estatisticas';
 import Perfil from './pages/Perfil';
+import Chat from './pages/Chat';
 
 function App() {
   return (
@@ -87,6 +88,14 @@ function App() {
             element={
               <RotaProtegida>
                 <Estatisticas />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <RotaProtegida>
+                <Chat />
               </RotaProtegida>
             }
           />

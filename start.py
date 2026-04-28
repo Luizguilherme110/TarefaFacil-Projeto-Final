@@ -29,8 +29,17 @@ def stream_output(name: str, process: subprocess.Popen) -> None:
     if process.stdout is None:
         return
 
-    for line in process.stdout:
-        print(f"[{name}] {line}", end="")
+    try:
+        for line in process.stdout:
+            try:
+                print(f"[{name}] {line}", end="")
+            except (ValueError, RuntimeError):
+                break
+    finally:
+        try:
+            process.stdout.close()
+        except Exception:
+            pass
 
 
 
@@ -41,7 +50,7 @@ def is_port_in_use(port: int) -> bool:
 
 
 
-def start_service(name: str, path: Path) -> subprocess.Popen | None:
+def start_service(name: str, path: Path) -> tuple[subprocess.Popen, threading.Thread] | None:
     if not path.exists():
         raise FileNotFoundError(f"Pasta não encontrada: {path}")
 
@@ -69,23 +78,29 @@ def start_service(name: str, path: Path) -> subprocess.Popen | None:
         bufsize=1,
     )
 
-    threading.Thread(target=stream_output, args=(name, process), daemon=True).start()
-    return process
+    output_thread = threading.Thread(target=stream_output, args=(name, process), name=f"{name}-output")
+    output_thread.start()
+    return process, output_thread
 
 
 
 def stop_process(process: subprocess.Popen) -> None:
-    if process.poll() is not None:
-        return
+    if process.poll() is None:
+        try:
+            if os.name == "nt":
+                process.terminate()
+            else:
+                process.send_signal(signal.SIGTERM)
+            process.wait(timeout=5)
+        except Exception:
+            process.kill()
+            process.wait(timeout=5)
 
-    try:
-        if os.name == "nt":
-            process.terminate()
-        else:
-            process.send_signal(signal.SIGTERM)
-        process.wait(timeout=5)
-    except Exception:
-        process.kill()
+    if process.stdout is not None:
+        try:
+            process.stdout.close()
+        except Exception:
+            pass
 
 
 
@@ -93,12 +108,15 @@ def main() -> int:
     print("Iniciando backend e frontend do TarefaFácil...\n")
 
     processes: dict[str, subprocess.Popen] = {}
+    output_threads: list[threading.Thread] = []
 
     try:
         for name, path in SERVICES.items():
-            process = start_service(name, path)
-            if process is not None:
+            started = start_service(name, path)
+            if started is not None:
+                process, output_thread = started
                 processes[name] = process
+                output_threads.append(output_thread)
 
         print("\nServiços preparados. URLs esperadas:")
         print("- Backend:  http://localhost:3000")
@@ -123,6 +141,9 @@ def main() -> int:
     finally:
         for process in processes.values():
             stop_process(process)
+
+        for thread in output_threads:
+            thread.join(timeout=2)
 
 
 if __name__ == "__main__":
